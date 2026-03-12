@@ -3,22 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeu de Cliqueur Pro</title>
+    <title>Jeu de Cliqueur Épique</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #f0f2f5 0%, #e6e9ef 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
+            color: #333;
         }
 
         #game-container {
@@ -26,7 +27,7 @@
             max-width: 1000px;
             background-color: white;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
             padding: 20px;
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -50,7 +51,7 @@
             color: #2c3e50;
             font-size: 2.5em;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
         }
 
         #clicker-container {
@@ -70,7 +71,7 @@
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
             transition: all 0.2s;
             position: relative;
             overflow: hidden;
@@ -80,7 +81,7 @@
 
         #clicker:active {
             transform: scale(0.95);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         #clicker-text {
@@ -93,7 +94,7 @@
 
         @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); }
-            70% { box-shadow: 0 0 0 20px rgba(255, 215, 0, 0); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 215, 0, 0); }
             100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
         }
 
@@ -150,7 +151,7 @@
             width: 100%;
             margin: 8px 0;
             transition: all 0.3s;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .upgrade:hover {
@@ -191,7 +192,7 @@
             width: 100%;
             margin: 8px 0;
             transition: all 0.3s;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .auto-clicker:hover {
@@ -258,13 +259,13 @@
 <body>
     <div id="game-container">
         <div id="header">
-            <h1>Jeu de Cliqueur Pro</h1>
+            <h1>Jeu de Cliqueur Épique</h1>
             <div id="score">Points: <span id="score-value">0</span></div>
         </div>
 
         <div id="clicker-container">
             <div id="clicker">
-                <span id="clicker-text">Cliquez-moi !</span>
+                <span id="clicker-text">Cliquez ici !</span>
             </div>
         </div>
 
@@ -277,38 +278,38 @@
 
         <div id="upgrades">
             <h3>Améliorations</h3>
-            <button class="upgrade" id="upgrade-click" onclick="buyUpgrade('click')">Améliorer le clic (+1 point/clic) - 10 points</button>
-            <button class="upgrade" id="upgrade-auto" onclick="buyUpgrade('auto')">Améliorer les cliqueurs automatiques (+1 point/sec) - 50 points</button>
+            <button class="upgrade" id="upgrade-click" onclick="buyUpgrade('click')">Amélioration du Clic (+1) - 10 pts</button>
+            <button class="upgrade" id="upgrade-auto" onclick="buyUpgrade('auto')">Amélioration Auto (+1/sec) - 50 pts</button>
         </div>
 
         <div id="auto-clickers">
             <h3>Cliqueurs Automatiques</h3>
-            <button class="auto-clicker" id="auto-clicker-1" onclick="buyAutoClicker(1)">Acheter 1 cliqueur automatique (1 point/sec) - 20 points</button>
-            <button class="auto-clicker" id="auto-clicker-10" onclick="buyAutoClicker(10)">Acheter 10 cliqueurs automatiques (10 points/sec) - 180 points</button>
-            <button class="auto-clicker" id="auto-clicker-100" onclick="buyAutoClicker(100)">Acheter 100 cliqueurs automatiques (100 points/sec) - 1500 points</button>
+            <button class="auto-clicker" id="auto-clicker-1" onclick="buyAutoClicker(1)">Robot Mini (1/sec) - 20 pts</button>
+            <button class="auto-clicker" id="auto-clicker-10" onclick="buyAutoClicker(10)">Armée de Robots (10/sec) - 180 pts</button>
+            <button class="auto-clicker" id="auto-clicker-100" onclick="buyAutoClicker(100)">Usine à Clics (100/sec) - 1500 pts</button>
         </div>
 
         <div id="achievements">
             <h3>Succès</h3>
             <div class="achievement" id="achievement-10">
-                <span class="achievement-icon">🏆</span>
-                <span>Atteindre 10 points</span>
+                <span class="achievement-icon">🏅</span>
+                <span>Débutant : 10 points</span>
             </div>
             <div class="achievement" id="achievement-100">
-                <span class="achievement-icon">🏆</span>
-                <span>Atteindre 100 points</span>
+                <span class="achievement-icon">🥈</span>
+                <span>Amateur : 100 points</span>
             </div>
             <div class="achievement" id="achievement-1000">
-                <span class="achievement-icon">🏆</span>
-                <span>Atteindre 1000 points</span>
+                <span class="achievement-icon">🥇</span>
+                <span>Pro : 1000 points</span>
             </div>
             <div class="achievement" id="achievement-10000">
                 <span class="achievement-icon">🏆</span>
-                <span>Atteindre 10000 points</span>
+                <span>Maître : 10000 points</span>
             </div>
             <div class="achievement" id="achievement-10-auto">
-                <span class="achievement-icon">🏆</span>
-                <span>Acheter 10 cliqueurs automatiques</span>
+                <span class="achievement-icon">🤖</span>
+                <span>Ingénieur : 10 robots</span>
             </div>
         </div>
     </div>
@@ -339,8 +340,6 @@
                 pointsPerSecond = gameState.pointsPerSecond || 0;
                 autoClickers = gameState.autoClickers || 0;
                 achievements = gameState.achievements || achievements;
-
-                // Mettre à jour l'affichage
                 updateDisplay();
                 updateAchievementsDisplay();
             }
@@ -365,16 +364,14 @@
             document.getElementById('points-per-second').textContent = pointsPerSecond;
             document.getElementById('auto-clickers-count').textContent = autoClickers;
 
-            // Mettre à jour le coût des améliorations
-            document.getElementById('upgrade-click').textContent = `Améliorer le clic (+1 point/clic) - ${10 + (pointsPerClick - 1) * 5} points`;
-            document.getElementById('upgrade-auto').textContent = `Améliorer les cliqueurs automatiques (+1 point/sec) - ${50 + pointsPerSecond * 10} points`;
+            // Mettre à jour les coûts
+            document.getElementById('upgrade-click').textContent = `Amélioration du Clic (+1) - ${10 + (pointsPerClick - 1) * 5} pts`;
+            document.getElementById('upgrade-auto').textContent = `Amélioration Auto (+1/sec) - ${50 + pointsPerSecond * 10} pts`;
+            document.getElementById('auto-clicker-1').textContent = `Robot Mini (1/sec) - ${20 + autoClickers * 2} pts`;
+            document.getElementById('auto-clicker-10').textContent = `Armée de Robots (10/sec) - ${180 + autoClickers * 10 * 2} pts`;
+            document.getElementById('auto-clicker-100').textContent = `Usine à Clics (100/sec) - ${1500 + autoClickers * 100 * 2} pts`;
 
-            // Mettre à jour le coût des cliqueurs automatiques
-            document.getElementById('auto-clicker-1').textContent = `Acheter 1 cliqueur automatique (1 point/sec) - ${20 + autoClickers * 2} points`;
-            document.getElementById('auto-clicker-10').textContent = `Acheter 10 cliqueurs automatiques (10 points/sec) - ${180 + autoClickers * 10 * 2} points`;
-            document.getElementById('auto-clicker-100').textContent = `Acheter 100 cliqueurs automatiques (100 points/sec) - ${1500 + autoClickers * 100 * 2} points`;
-
-            // Désactiver les boutons si on n'a pas assez de points
+            // Désactiver les boutons si pas assez de points
             document.getElementById('upgrade-click').disabled = score < (10 + (pointsPerClick - 1) * 5);
             document.getElementById('upgrade-auto').disabled = score < (50 + pointsPerSecond * 10);
             document.getElementById('auto-clicker-1').disabled = score < (20 + autoClickers * 2);
@@ -446,7 +443,6 @@
                 confetti.style.height = Math.random() * 10 + 5 + 'px';
                 confetti.style.opacity = Math.random() * 0.5 + 0.5;
                 confetti.style.animationDuration = Math.random() * 3 + 2 + 's';
-                confetti.style.animationDelay = Math.random() * 2 + 's';
                 confettiContainer.appendChild(confetti);
             }
         }
