@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeu de Cliqueur</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        #game-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #clicker {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.1s;
+            font-size: 24px;
+            color: white;
+            font-weight: bold;
+        }
+
+        #clicker:active {
+            transform: scale(0.95);
+        }
+
+        #score {
+            font-size: 36px;
+            margin: 20px 0;
+        }
+
+        #upgrades {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .upgrade {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .upgrade:hover {
+            background-color: #45a049;
+        }
+
+        .upgrade:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        #achievements {
+            margin: 20px 0;
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .achievement {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+            padding: 5px;
+        }
+
+        .achievement.completed {
+            color: #4CAF50;
+        }
+
+        .achievement-icon {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        #stats {
+            margin: 20px 0;
+            text-align: left;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        #auto-clickers {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .auto-clicker {
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .auto-clicker:hover {
+            background-color: #0b7dda;
+        }
+
+        .auto-clicker:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <h1>Jeu de Cliqueur</h1>
+        <div id="score">Points: <span id="score-value">0</span></div>
+        <div id="clicker">Cliquez-moi !</div>
+        <div id="stats">
+            <h3>Statistiques</h3>
+            <p>Points par clic: <span id="points-per-click">1</span></p>
+            <p>Points par seconde: <span id="points-per-second">0</span></p>
+        </div>
+        <div id="upgrades">
+            <h3>Améliorations</h3>
+            <button class="upgrade" id="upgrade-click" onclick="buyUpgrade('click')">Améliorer le clic (+1 point/clic) - 10 points</button>
+            <button class="upgrade" id="upgrade-auto" onclick="buyUpgrade('auto')">Améliorer les cliqueurs automatiques (+1 point/sec) - 50 points</button>
+        </div>
+        <div id="auto-clickers">
+            <h3>Cliqueurs Automatiques</h3>
+            <button class="auto-clicker" id="auto-clicker-1" onclick="buyAutoClicker(1)">Acheter un cliqueur automatique (1 point/sec) - 20 points</button>
+            <button class="auto-clicker" id="auto-clicker-10" onclick="buyAutoClicker(10)">Acheter 10 cliqueurs automatiques (10 points/sec) - 180 points</button>
+            <button class="auto-clicker" id="auto-clicker-100" onclick="buyAutoClicker(100)">Acheter 100 cliqueurs automatiques (100 points/sec) - 1500 points</button>
+        </div>
+        <div id="achievements">
+            <h3>Succès</h3>
+            <div class="achievement" id="achievement-10">
+                <span class="achievement-icon">🏆</span>
+                <span>Atteindre 10 points</span>
+            </div>
+            <div class="achievement" id="achievement-100">
+                <span class="achievement-icon">🏆</span>
+                <span>Atteindre 100 points</span>
+            </div>
+            <div class="achievement" id="achievement-1000">
+                <span class="achievement-icon">🏆</span>
+                <span>Atteindre 1000 points</span>
+            </div>
+            <div class="achievement" id="achievement-10000">
+                <span class="achievement-icon">🏆</span>
+                <span>Atteindre 10000 points</span>
+            </div>
+            <div class="achievement" id="achievement-10-auto">
+                <span class="achievement-icon">🏆</span>
+                <span>Acheter 10 cliqueurs automatiques</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables du jeu
+        let score = 0;
+        let pointsPerClick = 1;
+        let pointsPerSecond = 0;
+        let autoClickers = 0;
+        let achievements = {
+            '10': false,
+            '100': false,
+            '1000': false,
+            '10000': false,
+            '10-auto': false
+        };
+
+        // Charger les données depuis le localStorage
+        function loadGame() {
+            const savedGame = localStorage.getItem('clickerGameSave');
+            if (savedGame) {
+                const gameState = JSON.parse(savedGame);
+                score = gameState.score || 0;
+                pointsPerClick = gameState.pointsPerClick || 1;
+                pointsPerSecond = gameState.pointsPerSecond || 0;
+                autoClickers = gameState.autoClickers || 0;
+                achievements = gameState.achievements || achievements;
+
+                // Mettre à jour l'affichage
+                updateDisplay();
+                updateAchievementsDisplay();
+            }
+        }
+
+        // Sauvegarder les données dans le localStorage
+        function saveGame() {
+            const gameState = {
+                score,
+                pointsPerClick,
+                pointsPerSecond,
+                autoClickers,
+                achievements
+            };
+            localStorage.setItem('clickerGameSave', JSON.stringify(gameState));
+        }
+
+        // Mettre à jour l'affichage
+        function updateDisplay() {
+            document.getElementById('score-value').textContent = score;
+            document.getElementById('points-per-click').textContent = pointsPerClick;
+            document.getElementById('points-per-second').textContent = pointsPerSecond;
+
+            // Mettre à jour le coût des améliorations
+            document.getElementById('upgrade-click').textContent = `Améliorer le clic (+1 point/clic) - ${10 + (pointsPerClick - 1) * 5} points`;
+            document.getElementById('upgrade-auto').textContent = `Améliorer les cliqueurs automatiques (+1 point/sec) - ${50 + pointsPerSecond * 10} points`;
+
+            // Mettre à jour le coût des cliqueurs automatiques
+            document.getElementById('auto-clicker-1').textContent = `Acheter un cliqueur automatique (1 point/sec) - ${20 + autoClickers * 2} points`;
+            document.getElementById('auto-clicker-10').textContent = `Acheter 10 cliqueurs automatiques (10 points/sec) - ${180 + autoClickers * 10 * 2} points`;
+            document.getElementById('auto-clicker-100').textContent = `Acheter 100 cliqueurs automatiques (100 points/sec) - ${1500 + autoClickers * 100 * 2} points`;
+
+            // Désactiver les boutons si on n'a pas assez de points
+            document.getElementById('upgrade-click').disabled = score < (10 + (pointsPerClick - 1) * 5);
+            document.getElementById('upgrade-auto').disabled = score < (50 + pointsPerSecond * 10);
+            document.getElementById('auto-clicker-1').disabled = score < (20 + autoClickers * 2);
+            document.getElementById('auto-clicker-10').disabled = score < (180 + autoClickers * 10 * 2);
+            document.getElementById('auto-clicker-100').disabled = score < (1500 + autoClickers * 100 * 2);
+        }
+
+        // Mettre à jour l'affichage des succès
+        function updateAchievementsDisplay() {
+            for (const [id, completed] of Object.entries(achievements)) {
+                const element = document.getElementById(`achievement-${id}`);
+                if (element) {
+                    if (completed) {
+                        element.classList.add('completed');
+                    } else {
+                        element.classList.remove('completed');
+                    }
+                }
+            }
+        }
+
+        // Vérifier les succès
+        function checkAchievements() {
+            let updated = false;
+
+            if (score >= 10 && !achievements['10']) {
+                achievements['10'] = true;
+                updated = true;
+            }
+            if (score >= 100 && !achievements['100']) {
+                achievements['100'] = true;
+                updated = true;
+            }
+            if (score >= 1000 && !achievements['1000']) {
+                achievements['1000'] = true;
+                updated = true;
+            }
+            if (score >= 10000 && !achievements['10000']) {
+                achievements['10000'] = true;
+                updated = true;
+            }
+            if (autoClickers >= 10 && !achievements['10-auto']) {
+                achievements['10-auto'] = true;
+                updated = true;
+            }
+
+            if (updated) {
+                updateAchievementsDisplay();
+                saveGame();
+            }
+        }
+
+        // Gérer le clic sur le bouton principal
+        document.getElementById('clicker').addEventListener('click', function() {
+            score += pointsPerClick;
+            updateDisplay();
+            checkAchievements();
+            saveGame();
+        });
+
+        // Acheter une amélioration
+        function buyUpgrade(type) {
+            if (type === 'click') {
+                const cost = 10 + (pointsPerClick - 1) * 5;
+                if (score >= cost) {
+                    score -= cost;
+                    pointsPerClick += 1;
+                    updateDisplay();
+                    saveGame();
+                }
+            } else if (type === 'auto') {
+                const cost = 50 + pointsPerSecond * 10;
+                if (score >= cost) {
+                    score -= cost;
+                    pointsPerSecond += 1;
+                    updateDisplay();
+                    saveGame();
+                }
+            }
+        }
+
+        // Acheter des cliqueurs automatiques
+        function buyAutoClicker(amount) {
+            let cost;
+            if (amount === 1) {
+                cost = 20 + autoClickers * 2;
+            } else if (amount === 10) {
+                cost = 180 + autoClickers * 10 * 2;
+            } else if (amount === 100) {
+                cost = 1500 + autoClickers * 100 * 2;
+            }
+
+            if (score >= cost) {
+                score -= cost;
+                autoClickers += amount;
+                pointsPerSecond += amount;
+                updateDisplay();
+                checkAchievements();
+                saveGame();
+            }
+        }
+
+        // Gagner des points automatiquement
+        setInterval(function() {
+            if (pointsPerSecond > 0) {
+                score += pointsPerSecond;
+                updateDisplay();
+                checkAchievements();
+                saveGame();
+            }
+        }, 1000);
+
+        // Charger le jeu au démarrage
+        loadGame();
+        updateDisplay();
+        updateAchievementsDisplay();
+    </script>
+</body>
+</html>
