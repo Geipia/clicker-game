@@ -3,162 +3,291 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeu de Cliqueur</title>
+    <title>Jeu de Cliqueur Pro</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f0f0f0;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
         }
 
         #game-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+            width: 95%;
+            max-width: 1000px;
             background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: auto 1fr auto auto;
+            grid-template-areas:
+                "header header header"
+                "clicker stats upgrades"
+                "clicker achievements auto-clickers"
+                "clicker achievements auto-clickers";
+            gap: 15px;
+            height: 90vh;
+        }
+
+        #header {
+            grid-area: header;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        #header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #clicker-container {
+            grid-area: clicker;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
         }
 
         #clicker {
-            width: 200px;
-            height: 200px;
-            margin: 20px auto;
-            background-color: #4CAF50;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle at 30% 30%, #FFD700, #FF8C00);
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            transition: transform 0.1s;
-            font-size: 24px;
-            color: white;
-            font-weight: bold;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+            border: 5px solid #FFD700;
+            animation: pulse 2s infinite;
         }
 
         #clicker:active {
             transform: scale(0.95);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        #clicker-text {
+            font-size: 28px;
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+            z-index: 2;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); }
+            70% { box-shadow: 0 0 0 20px rgba(255, 215, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
         }
 
         #score {
-            font-size: 36px;
+            font-size: 2.5em;
+            color: #2c3e50;
             margin: 20px 0;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        #stats {
+            grid-area: stats;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #stats h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.4em;
+        }
+
+        #stats p {
+            margin: 8px 0;
+            font-size: 1.1em;
+            color: #34495e;
         }
 
         #upgrades {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin: 20px 0;
+            grid-area: upgrades;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #upgrades h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.4em;
         }
 
         .upgrade {
-            background-color: #4CAF50;
+            background: linear-gradient(to right, #4CAF50, #45a049);
             color: white;
             border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
+            padding: 12px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
+            font-size: 1em;
+            width: 100%;
+            margin: 8px 0;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
 
         .upgrade:hover {
-            background-color: #45a049;
+            background: linear-gradient(to right, #45a049, #3e8e41);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .upgrade:disabled {
             background-color: #cccccc;
             cursor: not-allowed;
-        }
-
-        #achievements {
-            margin: 20px 0;
-            text-align: left;
-            max-height: 200px;
-            overflow-y: auto;
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 5px;
-        }
-
-        .achievement {
-            display: flex;
-            align-items: center;
-            margin: 5px 0;
-            padding: 5px;
-        }
-
-        .achievement.completed {
-            color: #4CAF50;
-        }
-
-        .achievement-icon {
-            margin-right: 10px;
-            font-size: 20px;
-        }
-
-        #stats {
-            margin: 20px 0;
-            text-align: left;
-            background-color: #f9f9f9;
-            padding: 10px;
-            border-radius: 5px;
+            transform: none;
+            box-shadow: none;
         }
 
         #auto-clickers {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin: 20px 0;
+            grid-area: auto-clickers;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #auto-clickers h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.4em;
         }
 
         .auto-clicker {
-            background-color: #2196F3;
+            background: linear-gradient(to right, #2196F3, #0b7dda);
             color: white;
             border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
+            padding: 12px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
+            font-size: 1em;
+            width: 100%;
+            margin: 8px 0;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
 
         .auto-clicker:hover {
-            background-color: #0b7dda;
+            background: linear-gradient(to right, #0b7dda, #0b6bc9);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .auto-clicker:disabled {
             background-color: #cccccc;
             cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        #achievements {
+            grid-area: achievements;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        #achievements h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.4em;
+        }
+
+        .achievement {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+            padding: 8px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .achievement.completed {
+            background-color: #e8f5e9;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .achievement-icon {
+            margin-right: 10px;
+            font-size: 1.5em;
+        }
+
+        .confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
         }
     </style>
 </head>
 <body>
     <div id="game-container">
-        <h1>Jeu de Cliqueur</h1>
-        <div id="score">Points: <span id="score-value">0</span></div>
-        <div id="clicker">Cliquez-moi !</div>
+        <div id="header">
+            <h1>Jeu de Cliqueur Pro</h1>
+            <div id="score">Points: <span id="score-value">0</span></div>
+        </div>
+
+        <div id="clicker-container">
+            <div id="clicker">
+                <span id="clicker-text">Cliquez-moi !</span>
+            </div>
+        </div>
+
         <div id="stats">
             <h3>Statistiques</h3>
             <p>Points par clic: <span id="points-per-click">1</span></p>
             <p>Points par seconde: <span id="points-per-second">0</span></p>
+            <p>Cliqueurs automatiques: <span id="auto-clickers-count">0</span></p>
         </div>
+
         <div id="upgrades">
             <h3>Améliorations</h3>
             <button class="upgrade" id="upgrade-click" onclick="buyUpgrade('click')">Améliorer le clic (+1 point/clic) - 10 points</button>
             <button class="upgrade" id="upgrade-auto" onclick="buyUpgrade('auto')">Améliorer les cliqueurs automatiques (+1 point/sec) - 50 points</button>
         </div>
+
         <div id="auto-clickers">
             <h3>Cliqueurs Automatiques</h3>
-            <button class="auto-clicker" id="auto-clicker-1" onclick="buyAutoClicker(1)">Acheter un cliqueur automatique (1 point/sec) - 20 points</button>
+            <button class="auto-clicker" id="auto-clicker-1" onclick="buyAutoClicker(1)">Acheter 1 cliqueur automatique (1 point/sec) - 20 points</button>
             <button class="auto-clicker" id="auto-clicker-10" onclick="buyAutoClicker(10)">Acheter 10 cliqueurs automatiques (10 points/sec) - 180 points</button>
             <button class="auto-clicker" id="auto-clicker-100" onclick="buyAutoClicker(100)">Acheter 100 cliqueurs automatiques (100 points/sec) - 1500 points</button>
         </div>
+
         <div id="achievements">
             <h3>Succès</h3>
             <div class="achievement" id="achievement-10">
@@ -183,6 +312,8 @@
             </div>
         </div>
     </div>
+
+    <div id="confetti-container" class="confetti"></div>
 
     <script>
         // Variables du jeu
@@ -232,13 +363,14 @@
             document.getElementById('score-value').textContent = score;
             document.getElementById('points-per-click').textContent = pointsPerClick;
             document.getElementById('points-per-second').textContent = pointsPerSecond;
+            document.getElementById('auto-clickers-count').textContent = autoClickers;
 
             // Mettre à jour le coût des améliorations
             document.getElementById('upgrade-click').textContent = `Améliorer le clic (+1 point/clic) - ${10 + (pointsPerClick - 1) * 5} points`;
             document.getElementById('upgrade-auto').textContent = `Améliorer les cliqueurs automatiques (+1 point/sec) - ${50 + pointsPerSecond * 10} points`;
 
             // Mettre à jour le coût des cliqueurs automatiques
-            document.getElementById('auto-clicker-1').textContent = `Acheter un cliqueur automatique (1 point/sec) - ${20 + autoClickers * 2} points`;
+            document.getElementById('auto-clicker-1').textContent = `Acheter 1 cliqueur automatique (1 point/sec) - ${20 + autoClickers * 2} points`;
             document.getElementById('auto-clicker-10').textContent = `Acheter 10 cliqueurs automatiques (10 points/sec) - ${180 + autoClickers * 10 * 2} points`;
             document.getElementById('auto-clicker-100').textContent = `Acheter 100 cliqueurs automatiques (100 points/sec) - ${1500 + autoClickers * 100 * 2} points`;
 
@@ -271,22 +403,27 @@
             if (score >= 10 && !achievements['10']) {
                 achievements['10'] = true;
                 updated = true;
+                triggerConfetti();
             }
             if (score >= 100 && !achievements['100']) {
                 achievements['100'] = true;
                 updated = true;
+                triggerConfetti();
             }
             if (score >= 1000 && !achievements['1000']) {
                 achievements['1000'] = true;
                 updated = true;
+                triggerConfetti();
             }
             if (score >= 10000 && !achievements['10000']) {
                 achievements['10000'] = true;
                 updated = true;
+                triggerConfetti();
             }
             if (autoClickers >= 10 && !achievements['10-auto']) {
                 achievements['10-auto'] = true;
                 updated = true;
+                triggerConfetti();
             }
 
             if (updated) {
@@ -295,8 +432,32 @@
             }
         }
 
+        // Animation de confettis
+        function triggerConfetti() {
+            const confettiContainer = document.getElementById('confetti-container');
+            confettiContainer.innerHTML = '';
+
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti-piece');
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = Math.random() * 10 + 5 + 'px';
+                confetti.style.opacity = Math.random() * 0.5 + 0.5;
+                confetti.style.animationDuration = Math.random() * 3 + 2 + 's';
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                confettiContainer.appendChild(confetti);
+            }
+        }
+
         // Gérer le clic sur le bouton principal
         document.getElementById('clicker').addEventListener('click', function() {
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 100);
+
             score += pointsPerClick;
             updateDisplay();
             checkAchievements();
@@ -360,5 +521,24 @@
         updateDisplay();
         updateAchievementsDisplay();
     </script>
+
+    <style>
+        .confetti-piece {
+            position: absolute;
+            transform: rotate(0deg);
+            animation: confetti-fall linear;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: rotate(0deg) translateY(-10px);
+                opacity: 1;
+            }
+            100% {
+                transform: rotate(360deg) translateY(100vh);
+                opacity: 0;
+            }
+        }
+    </style>
 </body>
 </html>
